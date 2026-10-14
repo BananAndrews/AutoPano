@@ -2,7 +2,7 @@
 
 **One-button seamless mosaic of linear deep-sky panels — with a seam brush when you want control.**
 
-![AutoPano window: Leo Triplet, 6 colour panels](screenshot.png)
+![AutoPano window: Leo Triplet, 6 colour panels, seam map on](screenshot.png)
 
 Open the stacked panels of a mosaic (linear masters, colour or one mono filter), tick them and press **Build mosaic**. AutoPano:
 
