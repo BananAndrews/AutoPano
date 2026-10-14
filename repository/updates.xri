@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xri version="1.0">
+   <description>
+      <p>AutoPano - one-button seamless mosaic of linear deep-sky panels (plate solving, star refinement, photometry, seams, noise matching, seam editing).</p>
+   </description>
+   <platform os="all" arch="noarch" version="1.9.5:1.9.99">
+      <package fileName="AutoPano-1.0.0-20261014.zip" sha1="4ae053bb795bbfb39ec1c6a7326ebd9b9cc6a65e" type="script" releaseDate="20261014">
+         <title>AutoPano 1.0.0</title>
+         <description>
+            <p>First release: one-button seamless mosaic of linear panels - plate solving, joint star refinement, photometry, seams through the sky with multiband blending, gradual noise transition with object protection, seam map and seam brush, crop at the best angle, optional GraXpert.</p>
+            <p>After installation the script is available as Script &gt; Utilities &gt; AutoPano.</p>
+         </description>
+      </package>
+   </platform>
+</xri>
