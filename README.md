@@ -1,51 +1,71 @@
 # AutoPano for PixInsight
 
-**One-button seamless mosaic of linear deep-sky panels — with a seam brush when you want control.**
+**Seamless deep-sky mosaics in one click.**
 
-![AutoPano window: Leo Triplet, 6 colour panels, seam map on](screenshot.png)
+![AutoPano window: Leo Triplet from 6 panels, seam map on](screenshot.png)
 
-Open the stacked panels of a mosaic (linear masters, colour or one mono filter), tick them and press **Build mosaic**. AutoPano:
+## Why
 
-1. **Places the panels.** Panels without an astrometric solution are plate-solved (ImageSolver); a panel whose header coordinates are far off is placed on a solved neighbour by its star patterns first. Any camera rotation works. Then the positions of all panels are refined **together** on the stars of every overlap (bright-star residuals typically 0.1–0.3 px), and each panel is reprojected onto one common grid.
-2. **Matches the photometry.** Star fluxes give each panel's scale; the backgrounds are flattened and the remaining differences are removed by smooth surfaces fitted to all overlaps at once — no panel order, no accumulating error.
-3. **Joins the panels along seams through the sky.** The seams avoid stars and galaxies and prefer the cleaner panel; multiband blending hides them: the background blends over hundreds of pixels, the fine detail over a few.
-4. **Keeps every panel's signal-to-noise ratio.** A noisier panel is not cleaned up and the cleaner ones are not made worse everywhere: the grain changes **gradually** around the noisier panel (noise of the same texture is added in a transition zone), and bright parts of stars and galaxies are protected from it.
+Anyone who has assembled a mosaic in PixInsight knows the routine: plate-solve every panel, run a chain of tools one after another, adjust, repeat. Even then the result often gives away where the panels meet:
 
-The preview always shows the final result (zoom in to 1:1 to check the grain). Sliders adjust the noise transition and the object protection; overlays show the object mask, the noise map and the **seam map** — which panel gives which part of the mosaic, with each panel's noise relative to the cleanest one. **Create image** makes the mosaic (32-bit, linear, with an astrometric solution) without closing the window, so you can try other settings.
+- a **visible seam** — a line or a step in brightness or colour;
+- a **patch of different grain** — one panel had fewer subs or a worse night, and its noise stands out;
+- a **seam right through a galaxy**, or **doubled stars** where the panels overlap;
+- an **awkward crop** — the finished mosaic is tilted, and cutting off the empty corners loses a big part of the field.
 
-**Seam editing** (*Edit seams*): pick a panel in the list or Ctrl+click it on the preview, then paint where this panel should be used — for example over a galaxy that a noisier panel covers. AutoPano routes the seams around your strokes through the background by itself. Alt+paint erases, Ctrl+Z / Ctrl+Shift+Z undo / redo, *Clear panel* removes the strokes of the active panel. *Apply* re-blends the changed part of the mosaic.
+AutoPano does all of this for you. Open the stacked panels, tick them, press **Build mosaic** — and get one smooth image, as if it had been shot in one frame.
 
-Panels that cannot be joined (no overlap, no common stars, or not plate-solvable) are left out with a clear message, and the mosaic is built from the rest.
+## What you get
+
+- **No visible seams.** Panels are matched in brightness and colour, and joined along lines that run through empty sky, around stars and galaxies.
+- **Even noise.** A noisier panel doesn't stand out as a patch: its grain fades gradually into its neighbours. Your best panels keep their quality, and bright parts of galaxies and stars stay clean.
+- **Any panel layout.** Panels can be rotated in any direction, shot on different nights, or come without coordinates — AutoPano finds their place itself, accurate to a fraction of a pixel.
+- **See exactly what you get.** The preview shows the final mosaic; zoom in to 1:1 and move the sliders — no rebuilding.
+- **Seam map.** Shows which panel each part of the mosaic comes from and how noisy each panel is.
+- **Seam brush.** Want a galaxy taken from your cleanest panel? Paint over it — the seams reroute around your stroke by themselves.
+- **Maximum field after cropping.** The mosaic is built at the angle that leaves the largest rectangle without empty corners. One tick crops it — with no extra quality loss, and with the sky coordinates still exact.
+- **Strong gradients.** For light pollution or Moon glow, one tick runs GraXpert on every panel first (if you have it installed).
+- **Forgiving.** If a panel doesn't fit — no overlap, or no common stars — AutoPano tells you why and builds the mosaic from the rest.
+
+The result is a linear 32-bit image with an astrometric solution, ready for your usual processing.
 
 ## Installation
 
-1. In PixInsight: **Resources › Updates › Manage Repositories › Add** and enter
+1. In PixInsight: **Resources › Updates › Manage Repositories › Add** and paste
    ```
    https://raw.githubusercontent.com/BananAndrews/AutoPano/main/repository/
    ```
 2. **Resources › Updates › Check for Updates**, install, restart PixInsight.
 3. Run it from **Script › Utilities › AutoPano**.
 
-PixInsight 1.9.5 or newer. New versions arrive through **Check for Updates**. The repository is not signed yet, so PixInsight asks for confirmation once.
+Needs PixInsight 1.9.5 or newer. Updates arrive through **Check for Updates**. The repository is not signed yet, so PixInsight asks for confirmation once.
 
-## Settings
+## How to use
 
-| Setting | Default | Meaning |
-|---|---|---|
-| Use GraXpert (strong gradients only) | off | GraXpert background extraction (subtraction) on every panel first. Only for strong gradients (light pollution domes, Moon); AutoPano suggests it when it sees them. Needs GraXpert installed |
-| Noise transition | 1.00 | width of the gradual grain change around noisier panels, relative to the automatic width |
-| Object protection | 1.00 | how much bright parts of stars / galaxies are spared the added noise (0 = off) |
-| Mask softness | 12 px | feather of the object mask |
-| Crop to the filled area | off | the largest rectangle without empty corners (frame on the preview). The mosaic is always built at the angle that makes this rectangle largest — no extra resampling (the panels are reprojected once), the astrometric solution stays exact |
-| Preview quality | Quarter | resolution of the preview (the final image is always full resolution) |
+1. Open the panels: stacked, **unstretched** masters — colour, or one filter of a mono set (build each filter separately).
+2. Tick them and press **Build mosaic**.
+3. Check the preview, adjust the sliders if you like, press **Create image**. The window stays open, so you can try other settings.
 
-Mono mosaics: build each filter separately. Settings are remembered between runs.
+| Setting | What it does |
+|---|---|
+| Noise transition | how wide the zone is where the grain of a noisier panel fades into its neighbours |
+| Object protection | how strongly bright parts of galaxies and stars are kept clean |
+| Mask softness | how soft the edges of that protection are |
+| Show: object mask / noise map / seam map | helper overlays on the preview |
+| Crop to the filled area | crop to the largest rectangle without empty corners (the frame is shown on the preview) |
+| Use GraXpert | for strong gradients only; AutoPano suggests it when it sees them |
+| Edit seams | the seam brush: pick a panel (in the list or Ctrl+click on the preview) and paint where it should be used. Alt — eraser, Ctrl+Z / Ctrl+Shift+Z — undo / redo, *Apply* — rebuild |
+
+Settings are remembered between runs.
 
 ## Tips
 
-- Use linear (unstretched) masters; AutoPano warns about stretched ones.
-- Overlaps of 15–20 % or more give the seams room around objects; the console log tells you if yours were small.
-- Memory: about 4 GB for 6 colour panels of 3000 × 3000 px (a 7400 × 7500 px mosaic).
+- An overlap of 15–20 % or more gives the seams room to go around objects.
+- Memory: about 4 GB for six colour panels of 3000 × 3000 px.
+
+## Feedback
+
+AutoPano is new. If something doesn't work as expected, please open an issue here (or write in the forum thread) with the console log and a screenshot.
 
 ## Support
 
@@ -59,55 +79,75 @@ Free to use; all rights reserved. Modification and redistribution of modified ve
 
 # AutoPano для PixInsight
 
-**Бесшовная мозаика из линейных панелей одной кнопкой — и кисть швов, когда нужен контроль.**
+**Бесшовные мозаики дип-скай одной кнопкой.**
 
-Откройте сложенные панели мозаики (линейные мастера, цветные или одного моно-фильтра), отметьте их и нажмите **Build mosaic**. AutoPano:
+## Зачем
 
-1. **Расставляет панели.** Панели без астрометрии решаются ImageSolver; если координаты в заголовке сильно сбиты, панель сначала ставится на решённого соседа по рисунку звёзд. Поворот камеры — любой. Затем положения **всех** панелей уточняются вместе по звёздам всех перекрытий (невязки ярких звёзд обычно 0.1–0.3 px), и каждая панель перепроецируется на общую сетку.
-2. **Выравнивает фотометрию.** Масштаб каждой панели — по потокам звёзд; фон выравнивается, остаточные различия убираются гладкими поверхностями, подобранными по всем перекрытиям сразу — без порядка склейки и накопления ошибки.
-3. **Склеивает панели по швам через небо.** Швы обходят звёзды и галактики и тяготеют к более чистой панели; многополосное смешивание их прячет: фон смешивается на сотнях пикселей, мелкие детали — на нескольких.
-4. **Сохраняет отношение сигнал/шум каждой панели.** Шумную панель не «замыливают», а чистые не портят целиком: зерно меняется **плавно** вокруг шумной панели (в переходной зоне добавляется шум той же фактуры), яркие части звёзд и галактик от него защищены.
+Кто собирал мозаику в PixInsight, знает, как это обычно выглядит: решить астрометрию каждой панели, прогнать цепочку инструментов один за другим, подкрутить, повторить. И даже после этого по результату часто видно, где стыкуются панели:
 
-Превью всегда показывает итог (приблизьте до 1:1, чтобы проверить зерно). Ползунки — ширина перехода шума и защита объектов; слои — маска объектов, карта шума и **карта швов**: какая панель какую область дала, с шумом каждой панели относительно самой чистой. **Create image** создаёт мозаику (32 бит, линейную, с астрометрией), не закрывая окно, — можно попробовать другие настройки.
+- **заметный шов** — линия или ступенька по яркости и цвету;
+- **«заплатка» с другим зерном** — у одной панели меньше кадров или ночь была хуже, и её шум бросается в глаза;
+- **шов прямо через галактику** или **двоящиеся звёзды** на перекрытии;
+- **обидная обрезка** — готовая мозаика лежит наискосок, и, отрезая пустые углы, теряешь заметную часть поля.
 
-**Правка швов** (*Edit seams*): выберите панель в списке или Ctrl+щелчком на превью и закрасьте, где брать эту панель — например, галактику, попавшую на более шумную панель. Швы вокруг мазков AutoPano проводит сам, по фону. Alt — ластик, Ctrl+Z / Ctrl+Shift+Z — отмена / повтор, *Clear panel* убирает мазки активной панели. *Apply* пересобирает изменённую часть мозаики.
+AutoPano делает всё это сам. Открываете сложенные панели, отмечаете галочками, жмёте **Build mosaic** — и получаете одну ровную картинку, как будто она снята одним кадром.
 
-Панели, которые не удалось присоединить (нет перекрытия, нет общих звёзд или не решается астрометрия), пропускаются с понятным сообщением, а мозаика собирается из остальных.
+## Что вы получаете
+
+- **Никаких видимых швов.** Панели выравниваются по яркости и цвету, а стыкуются по линиям, которые идут по пустому небу в обход звёзд и галактик.
+- **Ровный шум.** Шумная панель не выделяется пятном: её зерно плавно переходит в соседние. Лучшие панели не теряют качества, а яркие части галактик и звёзд остаются чистыми.
+- **Любая раскладка панелей.** Панели могут быть повёрнуты как угодно, сняты в разные ночи или вообще без координат — AutoPano сам найдёт их место с точностью до долей пикселя.
+- **Видно, что получится.** Превью показывает готовую мозаику; можно приблизить до 1:1 и двигать ползунки без пересборки.
+- **Карта швов.** Показывает, из какой панели взят каждый участок мозаики и насколько шумная каждая панель.
+- **Кисть швов.** Хотите, чтобы галактика была взята с самой чистой панели? Закрасьте её — швы сами обойдут мазок.
+- **Максимум поля после обрезки.** Мозаика собирается под таким углом, чтобы прямоугольник без пустых углов был самым большим. Обрезка — одной галочкой, без дополнительной потери качества, а небесные координаты остаются точными.
+- **Сильные градиенты.** При засветке или свете Луны одна галочка сначала прогонит каждую панель через GraXpert (если он установлен).
+- **Не ломается на мелочах.** Если какая-то панель не стыкуется — нет перекрытия или общих звёзд, — AutoPano скажет почему и соберёт мозаику из остальных.
+
+На выходе — линейное 32-битное изображение с астрометрией, готовое к обычной обработке.
 
 ## Установка
 
-1. В PixInsight: **Resources › Updates › Manage Repositories › Add**, адрес
+1. В PixInsight: **Resources › Updates › Manage Repositories › Add**, вставьте адрес
    ```
    https://raw.githubusercontent.com/BananAndrews/AutoPano/main/repository/
    ```
-2. **Resources › Updates › Check for Updates**, установить, перезапустить PixInsight.
-3. Запуск: **Script › Utilities › AutoPano**.
+2. **Resources › Updates › Check for Updates**, установите, перезапустите PixInsight.
+3. Скрипт — в **Script › Utilities › AutoPano**.
 
-Нужен PixInsight 1.9.5 или новее. Новые версии приходят через **Check for Updates**. Репозиторий пока не подписан — PixInsight один раз спросит подтверждение.
+Нужен PixInsight 1.9.5 или новее. Обновления приходят через **Check for Updates**. Репозиторий пока не подписан, поэтому PixInsight один раз попросит подтверждение.
 
-## Настройки
+## Как пользоваться
 
-| Настройка | По умолчанию | Что делает |
-|---|---|---|
-| Use GraXpert (strong gradients only) | выкл. | сначала GraXpert (вычитание фона) на каждой панели. Только для сильных градиентов (засветка, Луна); AutoPano сам подскажет. Нужен установленный GraXpert |
-| Noise transition | 1.00 | ширина плавного перехода зерна вокруг шумных панелей относительно автоматической |
-| Object protection | 1.00 | насколько яркие части звёзд / галактик защищены от добавляемого шума (0 — выкл.) |
-| Mask softness | 12 px | мягкость краёв маски объектов |
-| Crop to the filled area | выкл. | максимальный прямоугольник без пустых углов (рамка на превью). Мозаика всегда собирается под углом, при котором этот прямоугольник наибольший, — без лишней интерполяции (панели перепроецируются один раз), астрометрия остаётся точной |
-| Preview quality | Quarter | разрешение превью (итог всегда в полном разрешении) |
+1. Откройте панели: сложенные **нерастянутые** мастера — цветные или один фильтр моно-сета (каждый фильтр собирается отдельно).
+2. Отметьте их и нажмите **Build mosaic**.
+3. Посмотрите превью, при желании подвигайте ползунки и нажмите **Create image**. Окно не закрывается — можно попробовать другие настройки.
 
-Моно-мозаики — каждый фильтр отдельным запуском. Настройки запоминаются.
+| Настройка | Что делает |
+|---|---|
+| Noise transition | ширина зоны, в которой зерно шумной панели плавно переходит в соседние |
+| Object protection | насколько сильно яркие части галактик и звёзд остаются чистыми |
+| Mask softness | мягкость краёв этой защиты |
+| Show: object mask / noise map / seam map | вспомогательные слои на превью |
+| Crop to the filled area | обрезка до максимального прямоугольника без пустых углов (рамка видна на превью) |
+| Use GraXpert | только для сильных градиентов; AutoPano сам подскажет, когда он нужен |
+| Edit seams | кисть швов: выберите панель (в списке или Ctrl+щелчком на превью) и закрасьте, где её брать. Alt — ластик, Ctrl+Z / Ctrl+Shift+Z — отмена / повтор, *Apply* — пересобрать |
+
+Настройки запоминаются между запусками.
 
 ## Советы
 
-- Нужны линейные (не растянутые) мастера; на растянутые AutoPano предупредит.
-- Перекрытие 15–20 % и больше даёт швам место обойти объекты; если было мало — скажет лог в консоли.
-- Память: около 4 ГБ на 6 цветных панелей 3000 × 3000 px (мозаика 7400 × 7500 px).
+- Перекрытие панелей 15–20 % и больше даёт швам место обойти объекты.
+- Память: около 4 ГБ на шесть цветных панелей 3000 × 3000 px.
+
+## Обратная связь
+
+AutoPano новый. Если что-то работает не так, как ожидалось, создайте issue здесь (или напишите в ветке на форуме) и приложите лог консоли и скриншот.
 
 ## Поддержка
 
-AutoPano бесплатен. Если он вам помог — **[♥ поддержите автора через PayPal](https://www.paypal.com/donate/?business=contact%40bluebelleweddings.com&no_recurring=0&item_name=AutoPano)** (такое же сердечко есть в окне скрипта, там можно оплатить и картой).
+AutoPano бесплатный. Если он вам помог — **[♥ поддержите автора через PayPal](https://www.paypal.com/donate/?business=contact%40bluebelleweddings.com&no_recurring=0&item_name=AutoPano)** (такое же сердечко есть в окне скрипта, там можно оплатить и картой).
 
 ## Лицензия
 
-Бесплатное использование; все права защищены. Изменение и распространение изменённых версий запрещены — см. [LICENSE](LICENSE).
+Пользоваться бесплатно; все права защищены. Изменять скрипт и распространять изменённые версии нельзя — см. [LICENSE](LICENSE).
