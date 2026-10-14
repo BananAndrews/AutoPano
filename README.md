@@ -18,7 +18,8 @@ AutoPano does all of this for you. Open the stacked panels, tick them, press **B
 ## What you get
 
 - **No visible seams.** Panels are matched in brightness and colour, and joined along lines that run through empty sky, around stars and galaxies.
-- **Even noise.** A noisier panel doesn't stand out as a patch: its grain fades gradually into its neighbours. Your best panels keep their quality, and bright parts of galaxies and stars stay clean.
+- **One even background, out of the box.** Gradients are removed by AutoPano's own background matching — no external tools needed.
+- **Even noise without losing detail.** A noisier panel doesn't stand out as a patch, and the detail of your best panels is protected (see below).
 - **Any panel layout.** Panels can be rotated in any direction, shot on different nights, or come without coordinates — AutoPano finds their place itself, accurate to a fraction of a pixel.
 - **See exactly what you get.** The preview shows the final mosaic; zoom in to 1:1 and move the sliders — no rebuilding.
 - **Seam map.** Shows which panel each part of the mosaic comes from and how noisy each panel is.
@@ -28,6 +29,14 @@ AutoPano does all of this for you. Open the stacked panels, tick them, press **B
 - **Forgiving.** If a panel doesn't fit — no overlap, or no common stars — AutoPano tells you why and builds the mosaic from the rest.
 
 The result is a linear 32-bit image with an astrometric solution, ready for your usual processing.
+
+## What makes it different
+
+**Gradients across the whole mosaic at once.** Usual tools match panels one pair at a time: each new panel is fitted to the previous one, small errors pile up, and the background ends up as a "staircase" or a slow tilt across the mosaic. AutoPano looks at all overlaps together and finds, for every panel, the smooth correction that makes the whole sky one even background. This works by default; GraXpert is only an extra for really strong light pollution or Moon glow.
+
+**Even noise — without bringing everything down to the worst panel.** Panels are never equally deep: one got two hours, another forty minutes. The usual fixes are to smooth the noisy panel (it turns plastic) or to add noise to all the good ones (you lose what you paid for with those hours). AutoPano does neither. Every panel keeps its own quality, and only in a wide zone around a noisier panel the grain changes gradually, so there is no edge for the eye to catch. How wide this zone is, you choose with one slider, and the noise map shows it.
+
+**Protecting the detail of your best panels.** Faint galaxy arms and nebula structure are exactly what added grain would hide. AutoPano builds an object mask and keeps those areas clean — the bright parts of galaxies, nebulae and stars stay as they were in your best data. The protection is graded by what you will actually see after stretching: bright cores are kept fully clean, while faint outskirts get the same grain as the sky around them, so no clean "halo" appears around an object. The *Object protection* and *Mask softness* sliders set how far it goes, and the red overlay shows the mask right on the preview.
 
 ## Installation
 
@@ -95,7 +104,8 @@ AutoPano делает всё это сам. Открываете сложенн�
 ## Что вы получаете
 
 - **Никаких видимых швов.** Панели выравниваются по яркости и цвету, а стыкуются по линиям, которые идут по пустому небу в обход звёзд и галактик.
-- **Ровный шум.** Шумная панель не выделяется пятном: её зерно плавно переходит в соседние. Лучшие панели не теряют качества, а яркие части галактик и звёзд остаются чистыми.
+- **Ровный фон сразу.** Градиенты убираются собственным методом AutoPano — без сторонних инструментов.
+- **Ровный шум без потери деталей.** Шумная панель не выделяется пятном, а детали лучших панелей защищены (подробнее ниже).
 - **Любая раскладка панелей.** Панели могут быть повёрнуты как угодно, сняты в разные ночи или вообще без координат — AutoPano сам найдёт их место с точностью до долей пикселя.
 - **Видно, что получится.** Превью показывает готовую мозаику; можно приблизить до 1:1 и двигать ползунки без пересборки.
 - **Карта швов.** Показывает, из какой панели взят каждый участок мозаики и насколько шумная каждая панель.
@@ -105,6 +115,14 @@ AutoPano делает всё это сам. Открываете сложенн�
 - **Не ломается на мелочах.** Если какая-то панель не стыкуется — нет перекрытия или общих звёзд, — AutoPano скажет почему и соберёт мозаику из остальных.
 
 На выходе — линейное 32-битное изображение с астрометрией, готовое к обычной обработке.
+
+## Чем отличается
+
+**Градиенты — сразу по всей мозаике.** Обычные инструменты подгоняют панели попарно: каждая следующая подстраивается под предыдущую, мелкие ошибки копятся, и фон превращается в «лесенку» или медленно заваливается от края к краю. AutoPano смотрит на все перекрытия сразу и для каждой панели находит такую плавную поправку, чтобы всё небо стало одним ровным фоном. Это работает по умолчанию, а GraXpert — только дополнение для очень сильной засветки или Луны.
+
+**Ровный шум — без подгонки всего под худшую панель.** Панели никогда не бывают одинаково глубокими: одна снята за два часа, другая за сорок минут. Обычно либо давят шум на слабой панели (и она становится пластиковой), либо добавляют шум во все хорошие (и теряется то, ради чего копились часы). AutoPano не делает ни того, ни другого. Каждая панель сохраняет своё качество, и только в широкой зоне вокруг шумной панели зерно меняется плавно — глазу не за что зацепиться. Ширину этой зоны задаёт один ползунок, а карта шума её показывает.
+
+**Защита деталей с лучших панелей.** Слабые рукава галактик и структура туманностей — именно то, что спрятало бы добавленное зерно. AutoPano строит маску объектов и оставляет эти места чистыми: яркие части галактик, туманностей и звёзд остаются такими, какими были в ваших лучших данных. Защита учитывает, что вы реально увидите после растяжки: яркие ядра остаются полностью чистыми, а слабые окраины получают то же зерно, что и небо вокруг, поэтому вокруг объекта не появляется чистый «ореол». Ползунки *Object protection* и *Mask softness* задают, насколько сильно и мягко она работает, а красный слой показывает маску прямо на превью.
 
 ## Установка
 
