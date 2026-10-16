@@ -4,10 +4,10 @@
       <p>AutoPano - one-button seamless mosaic of linear deep-sky panels (plate solving, star refinement, photometry, seams, noise matching, seam editing).</p>
    </description>
    <platform os="all" arch="noarch" version="1.9.5:1.9.99">
-      <package fileName="AutoPano-1.0.2-20261015.zip" sha1="d15190146f664e2e3f28679aadc6d97221c21eb0" type="script" releaseDate="20261015">
-         <title>AutoPano 1.0.2</title>
+      <package fileName="AutoPano-1.0.3-20261016.zip" sha1="eb804bfa149b36845ce921ba427f3bebad668b22" type="script" releaseDate="20261016">
+         <title>AutoPano 1.0.3</title>
          <description>
-            <p>Mosaics of large galaxies and nebulae: backgrounds are matched over the whole overlaps (not only empty sky), so no steps when an object fills the panels; GraXpert option in two steps (panels with enough empty sky, then the whole seamless mosaic) - removes light-pollution domes without cutting a large object's halo; fixed noise estimate on object-filled panels (no NaN, no blotchy added grain); FITS / any file names; the Astrometry column shows panels solved during the build.</p>
+            <p>GraXpert option: the background model is computed on an 8x reduced copy of the mosaic and applied to the full-resolution image - no more bright patches over noisier panels (the mosaic stays full size and full detail); empty corners are extended smoothly for GraXpert.</p>
             <p>After installation the script is available as Script &gt; Utilities &gt; AutoPano.</p>
          </description>
       </package>
